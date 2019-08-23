@@ -124,112 +124,108 @@ Obtendremos una base de datos similar a la siguiente:
 
 <hr>
 
-## Continuará mañana, si quieres el código completo está aquí (funciona, aunque aún no lo he revisado con calma):
+## Código para el análisis
 
+Usualmente la mejor forma de aprender cómo funciona una técnica es verla en acción, los únicos requisitos relevantes necesarios para comprender el código es la multiplicación de matrices por vectores, esta operación funciona de la siguiente forma:
+
+<p align=center><a href="https://www.codecogs.com/eqnedit.php?latex=A=\begin{bmatrix}&space;a_{1,1}&a_{1,2}&a_{1,3}\\&space;a_{2,1}&a_{2,2}&a_{2,3}\\&space;a_{3,1}&a_{3,2}&a_{3,3}&space;\end{bmatrix},B=\begin{bmatrix}&space;b_{1}\\&space;b_{2}\\&space;b_{3}&space;\end{bmatrix};A\times&space;B=&space;\begin{bmatrix}&space;a_{1,1}*b_{1}&plus;a_{1,2}*b_{2}&plus;a_{1,3}*b_{3}\\&space;a_{2,1}*b_{1}&plus;a_{2,2}*b_{2}&plus;a_{2,3}*b_{3}\\&space;a_{3,1}*b_{1}&plus;a_{3,2}*b_{1}&plus;a_{3,3}*b_{3}&space;\end{bmatrix}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?A=\begin{bmatrix}&space;a_{1,1}&a_{1,2}&a_{1,3}\\&space;a_{2,1}&a_{2,2}&a_{2,3}\\&space;a_{3,1}&a_{3,2}&a_{3,3}&space;\end{bmatrix},B=\begin{bmatrix}&space;b_{1}\\&space;b_{2}\\&space;b_{3}&space;\end{bmatrix};A\times&space;B=&space;\begin{bmatrix}&space;a_{1,1}*b_{1}&plus;a_{1,2}*b_{2}&plus;a_{1,3}*b_{3}\\&space;a_{2,1}*b_{1}&plus;a_{2,2}*b_{2}&plus;a_{2,3}*b_{3}\\&space;a_{3,1}*b_{1}&plus;a_{3,2}*b_{1}&plus;a_{3,3}*b_{3}&space;\end{bmatrix}" title="A=\begin{bmatrix} a_{1,1}&a_{1,2}&a_{1,3}\\ a_{2,1}&a_{2,2}&a_{2,3}\\ a_{3,1}&a_{3,2}&a_{3,3} \end{bmatrix},B=\begin{bmatrix} b_{1}\\ b_{2}\\ b_{3} \end{bmatrix};A\times B= \begin{bmatrix} a_{1,1}*b_{1}+a_{1,2}*b_{2}+a_{1,3}*b_{3}\\ a_{2,1}*b_{1}+a_{2,2}*b_{2}+a_{2,3}*b_{3}\\ a_{3,1}*b_{1}+a_{3,2}*b_{1}+a_{3,3}*b_{3} \end{bmatrix}" /></a></p>
+
+</br>
+
+Podemos observar que el resultado es un vector que contiene la suma de los valores de las columnas multiplicados por los valores del vector. Si considerásemos que nuestro vector es un conjunto de valores theta y nuestra matriz es nuestra base de datos, al realizar este cálculo obtendríamos los valores de **y** estimados para cada sujeto.
+
+<p align=center><a href="https://www.codecogs.com/eqnedit.php?latex=X=\begin{bmatrix}&space;x_{1,1}&x_{1,2}&x_{1,3}\\&space;x_{2,1}&x_{2,2}&x_{2,3}\\&space;x_{3,1}&x_{3,2}&x_{3,3}&space;\end{bmatrix},Thetas=\begin{bmatrix}&space;\Theta&space;_{1}\\&space;\Theta_{2}\\&space;\Theta_{3}&space;\end{bmatrix};X\times&space;Thetas=&space;\begin{bmatrix}&space;y_{1}\\&space;y_{2}\\&space;y_{3}&space;\end{bmatrix}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?X=\begin{bmatrix}&space;x_{1,1}&x_{1,2}&x_{1,3}\\&space;x_{2,1}&x_{2,2}&x_{2,3}\\&space;x_{3,1}&x_{3,2}&x_{3,3}&space;\end{bmatrix},Thetas=\begin{bmatrix}&space;\Theta&space;_{1}\\&space;\Theta_{2}\\&space;\Theta_{3}&space;\end{bmatrix};X\times&space;Thetas=&space;\begin{bmatrix}&space;y_{1}\\&space;y_{2}\\&space;y_{3}&space;\end{bmatrix}" title="X=\begin{bmatrix} x_{1,1}&x_{1,2}&x_{1,3}\\ x_{2,1}&x_{2,2}&x_{2,3}\\ x_{3,1}&x_{3,2}&x_{3,3} \end{bmatrix},Thetas=\begin{bmatrix} \Theta _{1}\\ \Theta_{2}\\ \Theta_{3} \end{bmatrix};X\times Thetas= \begin{bmatrix} y_{1}\\ y_{2}\\ y_{3} \end{bmatrix}" /></a></p>
+
+</br>
+
+Tras esta breve introducción, comenzaremos con el código para la realización de este procedimiento:
+
+Nuestra base de datos:
 ```Julia
-
-using DataFrames, Distributions, StatsBase, Statistics
-
-function sumario(resultado)
-    println(" ")
-    println(" ")
-    println(" ")
-    for i in resultado
-        println("$(i[1]) : $(i[2])")
-    end
-end
-
-
-
-
-function linearRegression(Ind, Deps, datos, tol = 1e-9, maxiter=100000, lr = 0.0001)
-
-    converge = false
-    contador = 0
-
-    # y: variable independiente; x dependientes, m = n observaciones
-    y     = reshape(datos[!,Symbol(Ind)],size(datos,1),1)
-    x     = convert(Matrix, datos[!,[Symbol(i) for i in Deps]])
-    theta = reshape(randn(size(x,2)),(size(x,2),1))
-    m     = length(y)
-
-    # Función con mi gradiente a minimizar
-    gradient(x,y,theta) = (2/m) * -1* (transpose(x) * (y - x*theta))
-
-    while !converge
-        contador += 1
-        theta2 = theta - lr * gradient(x,y,theta) # Ajuste de mis predictores
-        if all((theta2 - theta).< tol)
-            converge = true
-        else
-            if contador > maxiter
-                error("No hay convergencia con $contador iteraciones")
-            end
-            theta = theta2
-        end
-    end
-
-    # Cálculo de los valores T para cada predictor
-    preds = x-y/theta # Diferencia entre los valores en la base y mis predictores
-    err   = [std(preds[:,i]) for i in 1:size(preds,2)]
-    gl    = m - (length(Deps)-1) - 1 # m - k (sin constante) -1
-    Tvalores = theta./err
-    Pvalores = [2*ccdf(TDist(gl),i) for i in Tvalores]
-    res = DataFrame(Variables =Deps ,Beta=vcat(theta...),StdErr=err,Tvalue=vcat(Tvalores...),Pvalue=vcat(Pvalores...))
-
-    # Cálculo de la significacion global del modelo (http://facweb.cs.depaul.edu/sjost/csc423/documents/f-test-reg.htm)
-    yPred = x*theta
-
-    SSM(yPred) = sum((yPred.-mean(y)).^2)  # Suma de cuadrados corregidas para el modelo
-    SSE(y,yPred) = sum((y-yPred).^2)       # Suma de cuadrados para el error
-    SST(y) = sum((y.-mean(y)).^2)          # Suma de cuadrados corregidas para el total
-    DFM = length(Deps)-1                   # Grados de libertad corregidos para el modelo
-    DFE = m-length(Deps)                   # Grados de libertad del error
-    MSM = SSM(yPred)/DFM                   # Media de los cuadrados para el modelo
-    MSE = SSE(y,yPred)/(DFE)               # Media de cuadrados del error
-    MST = SST(y)/(m-1)                     # Media de cuadrados del total
-
-    F = (SSM(yPred)/(DFE))/(SSE(y,yPred)/(DFE))  # Valor del estadistico global F
-    P = ccdf(FDist(DFM,DFE),F)                   # P valor
-
-    Rsquared = cor(y,yPred)[1]
-    RsquaredAdj = 1 - (1-Rsquared)*(m-1)/DFE
-    resultado = Dict("1. Coefficients"=> res,"2. Ajuste del modelo" => "F = $F ; P valor = $P","3. Rsquared"=> Rsquared,"4. RsquaredAdj"=>RsquaredAdj)
-
-    return resultado
-end
-
-
-n   = 1000
 cte = [1 for i in 1:n]
 X   = randn(n)
 Z   = randn(n)
 R   = randn(n)
 Q   = randn(n)
-Y   = (2) .+ (2 .*X) + (0 .*Q) + (3 .*Z) + (5 .*R) + (2*randn(n))
 
-datos = DataFrame(Y=Y, cte=cte, X=X, Z=Z, R=R, Q=Q)
-print(head(datos))
+Y   = (2) .+ # Theta de la constante = 2
+   (2 .*X) + # Theta de X            = 2
+   (0 .*Q) + # Theta de Q            = 0 (no ayudará a predecir Y)
+   (3 .*Z) + # Theta de Z            = 3
+   (5 .*R) + # Theta de R            = 5 (variable de mayor peso)
+   (2*randn(n)) # error
 
+datos = DataFrame(Y = Y, cte=cte, X = X, Q = Q, Z = Z, R = R)
 
-Ind = "Y"
-Deps = ["cte","X","Q","Z","R"]
-res = linearRegression(Ind, Deps, datos)
-sumario(res)
+│ Row │ Y        │ cte   │ X         │ Z         │ R         │ Q         │
+│     │ Float64  │ Int64 │ Float64   │ Float64   │ Float64   │ Float64   │
+├─────┼──────────┼───────┼───────────┼───────────┼───────────┼───────────┤
+│ 1   │ 13.3001  │ 1     │ 1.1557    │ 1.37189   │ 0.467395  │ 0.453063  │
+│ 2   │ 7.21399  │ 1     │ 0.742289  │ 0.403971  │ 0.156844  │ -0.353715 │
+..........................................................................
+```
+</br>
+Trataremos de recuperar los valores de **Theta** en el código anterior presentados a través de "**Gradient descent**"
+
+```Julia
+using DataFrames
+
+Ind = "Y"                                   # Variable independiente (a predecir)
+Deps = ["cte","X","Q","Z","R"]              # Variables dependientes (que predicen)
+
+function gradientDescent(Ind, Deps, datos, tol = 1e-9, maxiter=100000, lr = 0.0001)
+    converge = false  # Inicialmente, el algoritmo no ha convergido
+    contador = 0      # Valor del contador de iteraciones inicial = 0
+    
+    # y: variable independiente; x dependientes, m = n observaciones
+    y     = reshape(datos[!,Symbol(Ind)],size(datos,1),1)
+    x     = convert(Matrix, datos[!,[Symbol(i) for i in Deps]])
+    theta = reshape(randn(size(x,2)),(size(x,2),1)) # Establecemos thetas iniciales aleatorios (media = 0; std = 1)
+    #n: numero de observaciones; m: numero de variables dependientes
+    n     = length(y)
+    m     = length(Deps)
+    # Función con mi gradiente a minimizar (derivada parcial del error)
+    gradient(x,y,theta) = (2/n) * -1* (transpose(x) * (y - x*theta))
+    
+    while !converge                               # Mientras no haya convergencia
+    
+        theta2 = theta - lr * gradient(x,y,theta) # Ajuste de mis predictores (acerca theta a los valores que menos error generan. es importante destacar que este paso debe realizarse para todos los thetas simultáneamente)
+        
+        if all((theta2 - theta).< tol) # compruebo si la diferencia de todos los thetas anteriores con los actuales sea menor con el valor que he tomado como referencia. Si lo es, el algoritmo ha convergido
+            converge = true
+        else                                     # Si no ha convergido
+            if contador > maxiter                # Compruebo si ha realizado tantas iteraciones como el máximo propuesto (maxiter). De ser así, el algoritmo no ha convergido.
+                error("No hay convergencia con $contador iteraciones")
+            else # Si ni ha convergido ni ha alcanzado el número máximo de iteraciones, realiza una iteración más (representado en el contador), y el valor theta se actualiza.
+                contador += 1
+                theta = theta2
+            end
+        end
+    end
+    # Una vez el algoritmo ha convergido, genera un DataFrame con los valores de las variables dependientes y de los thetas
+    return DataFrame(Dependientes = Deps,thetas = vcat(theta...)) #DataFrame precisa de vectores para generar columnas (vcat nos sirve con este propósito)
+end
 
 ```
+Y ya está!
+
+<hr>
+
 #### Resultado:
 ```
-1. Coefficients : 5×5 DataFrame
-│ Row │ Variables │ Beta      │ StdErr   │ Tvalue    │ Pvalue      │
-│     │ String    │ Float64   │ Float64  │ Float64   │ Float64     │
-├─────┼───────────┼───────────┼──────────┼───────────┼─────────────┤
-│ 1   │ cte       │ 1.97182   │ 0.301946 │ 6.53039   │ 1.04445e-10 │
-│ 2   │ X         │ 2.06303   │ 0.981848 │ 2.10118   │ 0.0358766   │
-│ 3   │ Q         │ 0.0823232 │ 1.02417  │ 0.0803802 │ 0.935951    │
-│ 4   │ Z         │ 3.06089   │ 0.878374 │ 3.48472   │ 0.000514128 │
-│ 5   │ R         │ 5.04084   │ 0.655287 │ 7.69257   │ 3.4598e-14  │
-3. Rsquared : 0.9542726140938167
-2. Ajuste del modelo : F = 10.190199380039555 ; P valor = 4.353187642552628e-8
-4. RsquaredAdj : 0.9540887854067567
+thetas = gradientDescent(Ind, Deps, datos)
+thetas.thetas = [round(i,digits=1) for i in thetas.thetas]
+print(thetas)
+
+5×2 DataFrame
+│ Row │ Dependientes │ thetas  │
+│     │ String       │ Float64 │
+├─────┼──────────────┼─────────┤
+│ 1   │ cte          │ 2.0     │
+│ 2   │ X            │ 2.0     │
+│ 3   │ Q            │ 0.1     │
+│ 4   │ Z            │ 3.1     │
+│ 5   │ R            │ 5.0     │
 ```
+
+Como podemos observar, el valor de las thetas estimadas es MUY cercano al valor de las thetas reales. EXITO!
