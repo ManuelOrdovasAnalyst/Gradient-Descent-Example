@@ -3,7 +3,7 @@ Gradient descent example for multiple linear regression in Julia
 
 ## Introducción:
 
-La técnica comúnmente llamada "Gradient descent" es un método moderno de estimación de parámetros empleado notablemente en el campo del Machine Learning. Aunque sea una técnica ampliamente utilizada, la documentación disponible para implementarla suele estar fragmentada o orientada a regresiones lineales simples. Este documento trata de exponer de forma clara el funcionamiento de esta técnica, enfocándose en la práctica y realizando un ejemplo práctico completo en el lenguaje Julia (Ya que creo que este lenguaje es el más comprensible, incluso para personas que no lo conozcan).
+La técnica comúnmente llamada "Gradient descent" es un método moderno de estimación de parámetros empleado notablemente en el campo del [**Machine Learning**](https://www.freecodecamp.org/news/understanding-gradient-descent-the-most-popular-ml-algorithm-a66c0d97307f/). Aunque sea una técnica ampliamente utilizada, la documentación disponible para implementarla suele estar fragmentada o orientada a regresiones lineales simples. Este documento trata de exponer de forma clara el funcionamiento de esta técnica, enfocándose en la práctica y realizando un ejemplo práctico completo en el lenguaje [Julia](https://julialang.org/) (Ya que creo que este lenguaje es el más comprensible, incluso para personas que no lo conozcan).
 
 <hr>
 
@@ -13,7 +13,7 @@ La fórmula de una regresión lineal múltiple tiene la siguiente forma:
 
 <p align=center>y = β0 + β1x1 + β2x2 + · · · + βmXm + ε</p>
 
-</br></br>
+</br>
 
 ¿Cómo se relaciona el contenido de una base de datos con esta formula?
 
@@ -21,7 +21,7 @@ La fórmula de una regresión lineal múltiple tiene la siguiente forma:
 
 <p align=center><a  href="https://www.codecogs.com/eqnedit.php?latex=y=\begin{bmatrix}&space;y_{1}\\&space;y_{2}\\&space;...\\&space;y_{n}\\&space;\end{bmatrix}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?y=\begin{bmatrix}&space;y_{1}\\&space;y_{2}\\&space;...\\&space;y_{n}\\&space;\end{bmatrix}" title="y=\begin{bmatrix} y_{1}\\ y_{2}\\ ...\\ y_{n}\\ \end{bmatrix}" /></a></p>
 
-</br></br>
+</br>
 
 * "**β0 + β1x1 + β2x2 + · · · + βmXm + ε**" Es la suma de varias cosas:
    1. "**β0**": Hace referencia a una **constante**.
@@ -29,7 +29,7 @@ La fórmula de una regresión lineal múltiple tiene la siguiente forma:
    3. "**xi**": Hace referencia al valor en una variable.
    4. "**ε**": Es el error, ya que todas las estimaciones no triviales tendrán un determinado error.
 
-</br></br>
+</br>
 
 La constante a la que nos hemos referido anteriormente tiene como utilidad la de estimar cuál es el valor de **y** cuando el resto de variables es cero, y está compuesta por el valor desconocido de **β0**.
 
@@ -39,7 +39,7 @@ x1, x2, x3, ... hacen referencia a los valores que predicen **y** en una base de
 
 ### Una medida para el error
 
-Usualmente la medida empleada es el Error Cuadrático Medio (**MSE**). Esta medida se obtiene al hacer la media de todos los errores al cuadrado (diferencia al cuadrado entre la **y** observada en la base y la **y** predicha). ¿Por qué al cuadrado? Porque como a veces el error será positivo y otras negativo, al elevarlo al cuadrado nos aseguramos que los valores negativos no anulan a los positivos.
+Usualmente la medida empleada es el [Error Cuadrático Medio](https://es.wikipedia.org/wiki/Error_cuadr%C3%A1tico_medio) (**MSE**). Esta medida se obtiene al hacer la media de todos los errores al cuadrado (diferencia al cuadrado entre la **y** observada en la base y la **y** predicha). ¿Por qué al cuadrado? Porque como a veces el error será positivo y otras negativo, al elevarlo al cuadrado nos aseguramos que los valores negativos no anulan a los positivos.
 
 La fórmula de este error es la siguiente:
 
@@ -47,7 +47,7 @@ La fórmula de este error es la siguiente:
 
 <p align=center><a href="https://www.codecogs.com/eqnedit.php?latex=y_{predicha}=\beta0&space;&plus;&space;\beta1x1&space;&plus;&space;\beta2x2&space;&plus;&space;...&space;&plus;&space;\beta&space;mXm&space;&plus;&space;\varepsilon" target="_blank"><img src="https://latex.codecogs.com/gif.latex?y_{predicha}=\beta0&space;&plus;&space;\beta1x1&space;&plus;&space;\beta2x2&space;&plus;&space;...&space;&plus;&space;\beta&space;mXm&space;&plus;&space;\varepsilon" title="y_{predicha}=\beta0 + \beta1x1 + \beta2x2 + ... + \beta mXm + \varepsilon" /></a></p>
 
-</br></br>
+</br>
 
 ¿Cómo puedo saber los valores de **β**? Inicialmente son valores aleatorios que poco a poco se irán acercando a los finales. Es este proceso de irse aproximando a los valores finales lo que da a la técnica el nombre "**gradient descent**"
 
@@ -55,15 +55,15 @@ La fórmula de este error es la siguiente:
 
 ### Aproximándonos a los valores reales de β
 
-La derivada parcial del error nos proporciona en qué medida el error de nuestra predicción se aproxima al mínimo (0). Sin profundizar en la matemática, este cálculo es bastante sencillo:
+La [derivada parcial](https://es.khanacademy.org/math/multivariable-calculus/multivariable-derivatives/partial-derivative-and-gradient-articles/a/introduction-to-partial-derivatives) del error nos proporciona en qué medida el error de nuestra predicción se aproxima al mínimo (0). Sin profundizar en la matemática, este cálculo para el **MSE** es bastante sencillo:
 
 <p align=center><a href="https://www.codecogs.com/eqnedit.php?latex=\frac{d}{dm}=\frac{2}{n}\sum&space;-x_{i}(y_{observada}-y_{predicha})" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\frac{d}{dm}=\frac{2}{n}\sum&space;-x_{i}(y_{observada}-y_{predicha})" title="\frac{d}{dm}=\frac{2}{n}\sum -x_{i}(y_{observada}-y_{predicha})" /></a></p>
 
-</br></br>
+</br>
 
 Trataremos que este valor sea lo más prósimo a 0 que sea posible. (Observamos que al hacer la derivada parcial, el elevado al cuadrado desaparece, esto permite que este valor sea negativo o positivo)
 
-</br></br>
+</br>
 
 Finalmente, idearemos la lógica para aproximar el valor de nuestras **β** inventadas a las reales. Este será un proceso iterativo que irá restando o sumando a nuestras **β** determinados valores (la derivada parcial previamente indicada). La cantidad de cambio que querremos que se aplique a cada paso se llama **tasa de aprendizaje** o **learning rate**, y es proporcionado a priori por nosotros. Establezco de forma arbitraria un **learning rate** (lr) de 0.0001.
 
@@ -85,7 +85,7 @@ Tendrá forma rectangular, y dispondremos de una variable "**Y**" que querremos 
 
 <p align=center><a href="https://www.codecogs.com/eqnedit.php?latex=\begin{bmatrix}&space;Y&&space;X&space;&&space;Z&space;&&space;R&space;&&space;Q\\&space;2&&space;3&space;&&space;5&space;&&space;6&space;&&space;2\\&space;4&&space;4&space;&&space;2&space;&&space;1&space;&&space;6\\&space;...&...&space;&&space;...&space;&&space;...&space;&...&space;\\&space;9&&space;3&space;&&space;2&space;&&space;1&space;&&space;5&space;\end{bmatrix}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\begin{bmatrix}&space;Y&&space;X&space;&&space;Z&space;&&space;R&space;&&space;Q\\&space;2&&space;3&space;&&space;5&space;&&space;6&space;&&space;2\\&space;4&&space;4&space;&&space;2&space;&&space;1&space;&&space;6\\&space;...&...&space;&&space;...&space;&&space;...&space;&...&space;\\&space;9&&space;3&space;&&space;2&space;&&space;1&space;&&space;5&space;\end{bmatrix}" title="\begin{bmatrix} y& x1 & x2 & x3 & x4\\ 2& 3 & 5 & 6 & 2\\ 4& 4 & 2 & 1 & 6\\ ...&... & ... & ... &... \\ 9& 3 & 2 & 1 & 5 \end{bmatrix}" /></a></p>
 
-</br></br>
+</br>
 
 En Julia, utilizando el paquete DataFrames crearemos esta base de datos de la siguiente manera:
 
@@ -126,7 +126,7 @@ Obtendremos una base de datos similar a la siguiente:
 
 ## Código para el análisis
 
-Usualmente la mejor forma de aprender cómo funciona una técnica es verla en acción, los únicos requisitos relevantes necesarios para comprender el código es la multiplicación de matrices por vectores, esta operación funciona de la siguiente forma:
+Usualmente la mejor forma de aprender cómo funciona una técnica es verla en acción, los únicos requisitos relevantes necesarios para comprender el código es la [multiplicación de matrices](http://oceanologia.ens.uabc.mx/~matematicas/algebralineal/II%20Matrices/promat.htm) por vectores, esta operación funciona de la siguiente forma:
 
 <p align=center><a href="https://www.codecogs.com/eqnedit.php?latex=A=\begin{bmatrix}&space;a_{1,1}&a_{1,2}&a_{1,3}\\&space;a_{2,1}&a_{2,2}&a_{2,3}\\&space;a_{3,1}&a_{3,2}&a_{3,3}&space;\end{bmatrix},B=\begin{bmatrix}&space;b_{1}\\&space;b_{2}\\&space;b_{3}&space;\end{bmatrix};A\times&space;B=&space;\begin{bmatrix}&space;a_{1,1}*b_{1}&plus;a_{1,2}*b_{2}&plus;a_{1,3}*b_{3}\\&space;a_{2,1}*b_{1}&plus;a_{2,2}*b_{2}&plus;a_{2,3}*b_{3}\\&space;a_{3,1}*b_{1}&plus;a_{3,2}*b_{1}&plus;a_{3,3}*b_{3}&space;\end{bmatrix}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?A=\begin{bmatrix}&space;a_{1,1}&a_{1,2}&a_{1,3}\\&space;a_{2,1}&a_{2,2}&a_{2,3}\\&space;a_{3,1}&a_{3,2}&a_{3,3}&space;\end{bmatrix},B=\begin{bmatrix}&space;b_{1}\\&space;b_{2}\\&space;b_{3}&space;\end{bmatrix};A\times&space;B=&space;\begin{bmatrix}&space;a_{1,1}*b_{1}&plus;a_{1,2}*b_{2}&plus;a_{1,3}*b_{3}\\&space;a_{2,1}*b_{1}&plus;a_{2,2}*b_{2}&plus;a_{2,3}*b_{3}\\&space;a_{3,1}*b_{1}&plus;a_{3,2}*b_{1}&plus;a_{3,3}*b_{3}&space;\end{bmatrix}" title="A=\begin{bmatrix} a_{1,1}&a_{1,2}&a_{1,3}\\ a_{2,1}&a_{2,2}&a_{2,3}\\ a_{3,1}&a_{3,2}&a_{3,3} \end{bmatrix},B=\begin{bmatrix} b_{1}\\ b_{2}\\ b_{3} \end{bmatrix};A\times B= \begin{bmatrix} a_{1,1}*b_{1}+a_{1,2}*b_{2}+a_{1,3}*b_{3}\\ a_{2,1}*b_{1}+a_{2,2}*b_{2}+a_{2,3}*b_{3}\\ a_{3,1}*b_{1}+a_{3,2}*b_{1}+a_{3,3}*b_{3} \end{bmatrix}" /></a></p>
 
