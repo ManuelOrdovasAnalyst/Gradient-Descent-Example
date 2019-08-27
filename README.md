@@ -229,3 +229,9 @@ print(thetas)
 ```
 
 Como podemos observar, el valor de las thetas estimadas es MUY cercano al valor de las thetas reales. EXITO!
+
+<hr>
+
+<p align="center">
+  <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT80HbVmMDwYFsD0HKQhthuro_an8IcbA5ePE4ewzApZgShKELo" style="border-radius: 50%;" />
+</p>
