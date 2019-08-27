@@ -1,4 +1,6 @@
-# Multivariate linear regression example using Gradient Descent Algorithm -- (Spanish)
+# Gradient Descent
+
+### Multivariate linear regression example using Gradient Descent Algorithm (Spanish)
 Gradient descent example for multiple linear regression in Julia
 
 ## Introducción:
